@@ -8,13 +8,21 @@ contract GoodAuction is AuctionInterface {
 	/* New data structure, keeps track of refunds owed */
 	mapping(address => uint) refunds;
 
-
 	/* 	Bid function, now shifted to pull paradigm
 		Must return true on successful send and/or bid, bidder
 		reassignment. Must return false on failure and 
 		allow people to retrieve their funds  */
 	function bid() payable external returns(bool) {
 		// YOUR CODE HERE
+		uint high = super.getHighestBid();
+		if (msg.value <= high) {
+			refunds[msg.sender] = msg.value;
+			return false;
+		}
+		refunds[super.getHighestBidder()] = high;
+		highestBid = msg.value;
+		highestBidder = msg.sender;
+		return true;
 	}
 
 	/*  Implement withdraw function to complete new 
@@ -23,6 +31,13 @@ contract GoodAuction is AuctionInterface {
 	    or no funds owed.  */
 	function withdrawRefund() external returns(bool) {
 		// YOUR CODE HERE
+        uint amount = refunds[msg.sender];
+        if (amount > 0) {
+            refunds[msg.sender] = 0;
+            msg.sender.transfer(amount);
+			return true;
+        }
+		return false;
 	}
 
 	/*  Allow users to check the amount they are owed
@@ -44,7 +59,12 @@ contract GoodAuction is AuctionInterface {
 	/*  Rewrite reduceBid from BadAuction to fix
 		the security vulnerabilities. Should allow the
 		current highest bidder only to reduce their bid amount */
-	function reduceBid() external {}
+	function reduceBid() external {
+	    if (msg.sender == highestBidder && highestBid >= 1) {
+	        highestBid = highestBid - 1;
+	        require(highestBidder.send(1));
+	    }
+	}
 
 
 	/* 	Remember this fallback function
@@ -56,6 +76,7 @@ contract GoodAuction is AuctionInterface {
 
 	function () payable {
 		// YOUR CODE HERE
+		throw;
 	}
 
 }

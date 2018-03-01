@@ -14,6 +14,15 @@ contract BadAuction is AuctionInterface {
 	 */
 	function bid() payable external returns (bool) {
 		// YOUR CODE HERE
+		uint high = super.getHighestBid();
+		if (msg.value <= high) {
+			msg.sender.transfer(msg.value);
+			return false;
+		}
+
+		highestBid = msg.value;
+		highestBidder = msg.sender;
+		return true;
 	}
 
 
@@ -42,6 +51,7 @@ contract BadAuction is AuctionInterface {
 
 	function () payable {
 		// YOUR CODE HERE
+		throw;
 	}
 
 }
