@@ -18,11 +18,12 @@ contract GoodAuction is AuctionInterface {
 		if (msg.value <= high) {
 			refunds[msg.sender] = msg.value;
 			return false;
+		} else {
+			refunds[super.getHighestBidder()] = high;
+			highestBid = msg.value;
+			highestBidder = msg.sender;
+			return true;
 		}
-		refunds[super.getHighestBidder()] = high;
-		highestBid = msg.value;
-		highestBidder = msg.sender;
-		return true;
 	}
 
 	/*  Implement withdraw function to complete new 
