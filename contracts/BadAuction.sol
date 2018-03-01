@@ -20,10 +20,13 @@ contract BadAuction is AuctionInterface {
 			return false;
 		} else {
 			if (highestBidder != address(0)) {
-				highestBidder.transfer(highestBid);
+	        	if (!highestBidder.send(high)) {
+					msg.sender.transfer(msg.value);
+					return false;
+				}
 			}
-			highestBid = msg.value;
 			highestBidder = msg.sender;
+			highestBid = msg.value;
 			return true;
 		}
 	}
@@ -54,7 +57,7 @@ contract BadAuction is AuctionInterface {
 
 	function () payable {
 		// YOUR CODE HERE
-		revert();
+		msg.sender.transfer(msg.value);
 	}
 
 }
