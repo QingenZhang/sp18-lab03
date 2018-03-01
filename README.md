@@ -1,7 +1,7 @@
-# Author:
-Qingen Zhang
+# Author
+Qingen Zhang 26363223
 
-Renjun Cheng 
+Renjun Cheng 26327618
 
 # Attack the Auction
 Welcome to lab03. In this assignment you'll be getting acclimated with external calls, inheritance, and smart contract security.
